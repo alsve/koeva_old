@@ -68,24 +68,18 @@ void koeva_menu_summary()
 
         koeva_lcd_clear();
         koeva_lcd_write(0, 0, "Processed GBC :");
-        koeva_intFormatter(kprocGBC, 4, ktemp, " ");
+        koeva_intNullFormatter(kprocGBC, 4, ktemp);
         koeva_lcd_write(16, 0, ktemp);
 
         memset(ktemp, 0, 5);
 
         koeva_lcd_write(0, 1, "Processed tray:");
-        koeva_intFormatter(kprocTray, 2, ktemp, " ");
+        koeva_intNullFormatter(kprocTray, 2, ktemp);
         koeva_lcd_write(18, 1, ktemp);
         koeva_lcd_write(0, 2, "A:NextTray B:Evaluat");
-        koeva_lcd_write(0, 3, "C:Re-scan  D:Restart");
+        koeva_lcd_write(0, 3, "C:Edit N-th Tray    ");
 
         free(ktemp);
-}
-
-void koeva_menu_confirmation() {
-        koeva_lcd_clear();
-        koeva_lcd_write(0, 1, "   Are you sure?    ");
-        koeva_lcd_write(0, 2, "  A:Yes     B:No    ");
 }
 
 int koeva_main(void)
@@ -126,7 +120,6 @@ int koeva_main(void)
                         }
                         else kwhere = 'q';
                         break;
-                //Case d is only for quality checker users.
                 case 'd':
                         koeva_menu_nthEditor();
                         koeva_serial_flush();
@@ -148,23 +141,12 @@ int koeva_main(void)
                 case 's':
                         koeva_menu_summary();
                         koeva_serial_flush();
-                        kinput = koeva_getSelectedFrom("ABCD");
+                        kinput = koeva_getSelectedFrom("ABC");
                         if (kinput == 'A') {
                                 kwhere = 'b';
                         }
                         else if (kinput == 'B') kwhere = 'c';
-                        else if (kinput == 'C') {
-                                kwhere = 'b';
-                                koeva_image_decNthEditor();
-                        } else if (kinput == 'D') {
-                                koeva_serial_flush();
-                                koeva_menu_confirmation();
-                                kinput = koeva_getSelectedFrom("AB");
-                                if (kinput == 'A') {
-                                        kwhere = 'a';
-                                        koeva_paramReset();
-                                } else kwhere = 's';
-                        }
+                        else if (kinput == 'C') kwhere = 'd';
                         else kwhere = 'q';
                         break;
                 case 'q':

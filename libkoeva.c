@@ -156,25 +156,37 @@ char koeva_getSelectedFrom(char* _selection)
         return kselected;
 }
 
-void koeva_intNullFormatter(int _kint, int _buffSize, char* _dest)
+void koeva_intFormatter(int _kint, int _buffSize, char* _dest, char* _fillWith)
 {
-        int kinlen;
+        //Func @ koeva_intFormatter
+        //Desc @ This function will fill _dest string with
+        //       char _fillWith
+        //Example @ if we want to format an integer for 2 digit number filled with
+        //        @ zero number. So the function will be used as follow:
+        //        @ koeva_intFormatter(123, 4, varDestChar, "0");
+        //          varDestChar => "0123"
+        //        @ koeva_intFormatter(12, 4, varDestChar, "0");
+        //          varDestChar => "0012"
+
+        int kstrlen;
         int i;
-        char* ktemp = malloc(sizeof(char) * (_buffSize + 1));
+        char* ktemp1 = malloc(sizeof(char) * (_buffSize + 1));
         char* ktemp2 = malloc(sizeof(char) * (_buffSize + 1));
-        sprintf(ktemp, "%d", _kint);
 
-        kinlen = strlen(ktemp);
+        sprintf(ktemp1, "%d", _kint);
+        kstrlen = strlen(ktemp1);
 
-        for (i = 0; i < (kinlen - _buffSize); i++) {
-                strcat(ktemp2, "0");
+        if (_buffSize < kstrlen) {
+                fprintf(stderr, "ERROR: koeva_intNullFormatter: wrong _buffSize param?");
+                return;
         }
 
-        strcat(ktemp2, ktemp);
-        strcat(_dest, ktemp2);
+        for (i = 0; i < (_buffSize - kstrlen); i++) {
+                strcat(ktemp2, _fillWith);
+        }
 
-        free(ktemp);
-        free(ktemp2);
+        strcat(ktemp2, ktemp1);
+        strcat(_dest, ktemp2);
 }
 
 int koeva_shutdown()
@@ -219,6 +231,9 @@ int koeva_paramReset()
 {
         kgrade = 0;
         ksumDefect = 0;
+        knthImage = 0;
+        kmaxImage = 0;
+        memset(kprocGBC, 0, 100);
 
         return 0;
 }
@@ -400,7 +415,7 @@ void koeva_image_setCurrentKprocGBC(int _kqtGBC)
                 return;
         }
 
-        kprocGBC[knthImage - 1] = _kqtGBC;
+        kprocGBC[knthImage] = _kqtGBC;
         return;
 }
 
@@ -409,8 +424,8 @@ int koeva_image_getSumKprocGBC()
         unsigned int _kprocGBC = 0;
         unsigned int i = 0;
 
-        for (i = 0; i < knthImage; i++) {
-                _kprocGBC += kprocGBC[i];
+        for (i = 0; i < kmaxImage; i++) {
+                _kprocGBC += kprocGBC[i+1];
         }
 
         return _kprocGBC;
