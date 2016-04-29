@@ -18,23 +18,13 @@
 
 #define MAX_BUFF 256
 
-int krc;
-int klcd_state;
-int kbrate;
-int kverbose;
-
-unsigned int ksumDefect;
-unsigned int kgrade;
-unsigned int knthImage;
-unsigned int kmaxImage;
-
-char kttyUSB[MAX_BUFF];
-
 void koeva_die(char* _msg);
 void koeva_intNullFormatter(int _kint, int _buffSize, char* _dest);
 void koeva_image_setNthEditor(int _nth);
 void koeva_image_incNthEditor();
 void koeva_image_decNthEditor();
+void koeva_image_setCurrentKprocGBC(int _kqtGBC);
+int koeva_image_getSumKprocGBC();
 int koeva_lcd_init(char* _ttyUSB, int _baudrate);
 int koeva_lcd_write(unsigned int _posX, unsigned int _posY, char* kstring);
 int koeva_getIntFrom(char _terminator, int _maxDigit, int* _dst);

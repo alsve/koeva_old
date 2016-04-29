@@ -3,7 +3,6 @@
 #define KBAUD_RATE 9600
 
 char* kdevice_path = "/dev/ttyUSB0";
-int kprocGBC;
 
 void koeva_menu_main()
 {
@@ -30,6 +29,8 @@ void koeva_menu_imageProcessing()
 
         //Increase defect rate (dummy)
         koeva_addDefect(5);
+        //Set nth-Tray processed Green Bean Coffee
+        koeva_image_setCurrentKprocGBC(66);
 }
 
 void koeva_menu_gradePrint()
@@ -59,8 +60,8 @@ void koeva_menu_nthEditor()
 
 void koeva_menu_summary()
 {
-        int kprocGBC = 1132;
-        int kprocTray = 8;
+        unsigned int kprocGBC = koeva_image_getSumKprocGBC();
+        unsigned int kprocTray = koeva_image_getNthEditor();
         char* ktemp = malloc(sizeof(char) * 5);
 
         memset(ktemp, 0, 5);

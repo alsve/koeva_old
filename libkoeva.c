@@ -9,6 +9,19 @@
 
 #define KSLEEP_BETWEEN 100000
 
+int krc;
+int klcd_state;
+int kbrate;
+int kverbose;
+
+unsigned int ksumDefect;
+unsigned int kgrade;
+unsigned int knthImage;
+unsigned int kmaxImage;
+unsigned int* kprocGBC;
+
+char kttyUSB[MAX_BUFF];
+
 void koeva_die(char* _msg)
 {
         fprintf(stderr, "ERROR: %s\n", _msg);
@@ -84,6 +97,7 @@ int koeva_rpiReady()
         ksumDefect = 0;
         kgrade = 0;
         knthImage = 0;
+        kprocGBC = calloc(100, sizeof(int));
         koeva_serialport_write(klcd_state, "R");
         printf("WARNING: Raspberry is ready!\n"
                "WARNING: Waiting for LCD and keypad...\n");
@@ -169,6 +183,7 @@ int koeva_shutdown()
         koeva_lcd_write(0, 1, "  SHUTTING DOWN...  ");
         sleep(1);
         koeva_lcd_clear();
+        free(kprocGBC);
         return koeva_serialport_close(klcd_state);
 }
 
@@ -376,4 +391,27 @@ int koeva_kmaxImage_nthImage(unsigned int _nthImage)
 int koeva_serial_flush()
 {
         return tcflush(klcd_state, TCIOFLUSH);
+}
+
+void koeva_image_setCurrentKprocGBC(int _kqtGBC)
+{
+        if (_kqtGBC > 9999) {
+                fprintf(stderr, "ERROR: koeva_image_setKprocGBC: please re-check input param");
+                return;
+        }
+
+        kprocGBC[knthImage - 1] = _kqtGBC;
+        return;
+}
+
+int koeva_image_getSumKprocGBC()
+{
+        unsigned int _kprocGBC = 0;
+        unsigned int i = 0;
+
+        for (i = 0; i < knthImage; i++) {
+                _kprocGBC += kprocGBC[i];
+        }
+
+        return _kprocGBC;
 }
