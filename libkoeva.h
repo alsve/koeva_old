@@ -24,6 +24,7 @@ void koeva_image_incNthEditor();
 void koeva_image_decNthEditor();
 void koeva_image_setCurrentKprocGBC(int _kqtGBC);
 void koeva_intFormatter(int _kint, int _buffSize, char* _dest, char* _fillWith);
+void koeva_spaceFormatter(int _kint, int _buffSize, char* _dest);
 int koeva_image_getSumKprocGBC();
 int koeva_lcd_init(char* _ttyUSB, int _baudrate);
 int koeva_lcd_write(unsigned int _posX, unsigned int _posY, char* kstring);

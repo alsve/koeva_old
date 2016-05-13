@@ -1,4 +1,5 @@
 #include "libkoeva.h"
+#include "libkimage.h"
 
 #define KBAUD_RATE 9600
 
@@ -17,6 +18,7 @@ void koeva_menu_imageProcessing()
 {
         int ki;
         char kprocBar[21] = "    [          ]    ";
+        char* ktemp_charpint = malloc(sizeof(char) * 10);
 
         koeva_lcd_clear();
         koeva_lcd_write(0, 1, " PROCESSING IMAGE:  ");
@@ -27,10 +29,16 @@ void koeva_menu_imageProcessing()
                 usleep(500000);
         }
 
+        sprintf(ktemp_charpint, "%d", koeva_image_getNthEditor());
+
+        koeva_cv_captureImage(ktemp_charpint);
+
         //Increase defect rate (dummy)
         koeva_addDefect(5);
         //Set nth-Tray processed Green Bean Coffee
         koeva_image_setCurrentKprocGBC(66);
+
+        free(ktemp_charpint);
 }
 
 void koeva_menu_gradePrint()
@@ -65,17 +73,17 @@ void koeva_menu_summary()
         char* ktemp = malloc(sizeof(char) * 5);
 
         memset(ktemp, 0, 5);
+        sprintf(ktemp, "%d", kprocGBC);
 
         koeva_lcd_clear();
         koeva_lcd_write(0, 0, "Processed GBC :");
-        koeva_intFormatter(kprocGBC, 4, ktemp, " ");
         koeva_lcd_write(16, 0, ktemp);
 
         memset(ktemp, 0, 5);
+        sprintf(ktemp, "%d", kprocTray);
 
         koeva_lcd_write(0, 1, "Processed tray:");
-        koeva_intFormatter(kprocTray, 2, ktemp, " ");
-        koeva_lcd_write(18, 1, ktemp);
+        koeva_lcd_write(16, 1, ktemp);
         koeva_lcd_write(0, 2, "A:NextTray B:Evaluat");
         koeva_lcd_write(0, 3, "C:Re-scan  D:Restart");
 
@@ -103,6 +111,7 @@ int koeva_main(void)
         while (kquit != 1) {
                 switch(kwhere){
                 case 'a':
+                        koeva_cv_init();
                         koeva_menu_main();
                         koeva_serial_flush();
                         kinput = koeva_getSelectedFrom("AB");
@@ -169,6 +178,7 @@ int koeva_main(void)
                         break;
                 case 'q':
                         kquit = 1;
+                        koeva_cv_shutdown();
                         break;
                 default:
                         printf("WARNING: Koeva, Where are we?\n");
