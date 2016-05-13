@@ -111,7 +111,7 @@ int koeva_main(void)
         while (kquit != 1) {
                 switch(kwhere){
                 case 'a':
-                        koeva_cv_init();
+                        koeva_cv_dirInit();
                         koeva_menu_main();
                         koeva_serial_flush();
                         kinput = koeva_getSelectedFrom("AB");
@@ -178,7 +178,7 @@ int koeva_main(void)
                         break;
                 case 'q':
                         kquit = 1;
-                        koeva_cv_shutdown();
+                        koeva_cv_dirShutdown();
                         break;
                 default:
                         printf("WARNING: Koeva, Where are we?\n");
@@ -193,7 +193,9 @@ int main(void)
         koeva_lcd_init(kdevice_path, KBAUD_RATE);
         koeva_rpiReady();
         koeva_isLcdReady();
+        koeva_cv_cameraInit();
         koeva_main();
+        koeva_cv_cameraShutdown();
         koeva_shutdown();
         return 0;
 }

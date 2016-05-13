@@ -37,6 +37,8 @@ int koeva_cv_dirInit()
 
 int koeva_cv_cameraInit()
 {
+        int ki = 0;
+
         kcamera0 = cvCaptureFromCAM(1);
         cvSetCaptureProperty(kcamera0,
                                 CV_CAP_PROP_FRAME_WIDTH, 1024);
@@ -45,6 +47,12 @@ int koeva_cv_cameraInit()
 
         if (!kcamera0) {
                 fprintf(stderr, "Could not open the camera0!\n");
+        }
+
+        //Skip 6 frame for stable image acquisition
+        for (ki = 0; ki < 6; ki++) {
+                cvQueryFrame(kcamera0);
+                sleep(1);
         }
 
         return 0;
