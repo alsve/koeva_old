@@ -1,4 +1,4 @@
-/* KOEVA_arduino_serial 
+/* libkoeva.c
  * author : Alrayan
  * date of creation : April 22, 2016
  * library : ardunio-serial (Tod E. Kurt, 2006)

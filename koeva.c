@@ -1,3 +1,10 @@
+/* koeva.c 
+ * author : Alrayan
+ * date of creation : April 22, 2016
+ * library : ardunio-serial (Tod E. Kurt, 2006)
+ * License : inherited from MIT license
+ */
+
 #include "libkoeva.h"
 #include "libkimage.h"
 
@@ -31,7 +38,8 @@ void koeva_menu_imageProcessing()
 
         sprintf(ktemp_charpint, "%d", koeva_image_getNthEditor());
 
-        koeva_cv_captureImage(ktemp_charpint);
+        koeva_cv_captureImage(ktemp_charpint, 0);
+        koeva_cv_captureImage(ktemp_charpint, 1);
 
         //Increase defect rate (dummy)
         koeva_addDefect(5);
@@ -104,9 +112,6 @@ int koeva_main(void)
         int kquit = 0;
         int kselectedInt = 0;
         int ktemp = 0;
-
-        char* kselectedString;
-        
 
         while (kquit != 1) {
                 switch(kwhere){
@@ -193,9 +198,7 @@ int main(void)
         koeva_lcd_init(kdevice_path, KBAUD_RATE);
         koeva_rpiReady();
         koeva_isLcdReady();
-        koeva_cv_cameraInit();
         koeva_main();
-        koeva_cv_cameraShutdown();
         koeva_shutdown();
         return 0;
 }

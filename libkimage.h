@@ -21,12 +21,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-int koeva_cv_init();
-int koeva_cv_shutdown();
+typedef enum {
+        KCAMERA_TOP,
+        KCAMERA_BOTTOM
+} kcamera_t;
+
 int koeva_cv_dirInit();
-int koeva_cv_cameraInit();
 int koeva_cv_dirShutdown();
-int koeva_cv_cameraShutdown();
-int koeva_cv_captureImage(char* _filename);
+int koeva_cv_captureImage(char* _filename, kcamera_t _which);
 
 #endif

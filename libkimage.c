@@ -1,22 +1,7 @@
 #include "libkimage.h"
+#include "libkudev.h"
 
 const char* IMAGE_DIR = "koeva_image_directory";
-CvCapture* kcamera0 = 0;
-IplImage* kframe0 = 0;
-
-int koeva_cv_init()
-{
-        koeva_cv_dirInit();
-        koeva_cv_cameraInit();
-        return 0;
-}
-
-int koeva_cv_shutdown()
-{
-        koeva_cv_dirShutdown();
-        koeva_cv_cameraShutdown();
-        return 0;
-}
 
 int koeva_cv_dirInit()
 {
@@ -35,29 +20,6 @@ int koeva_cv_dirInit()
         return 0;
 }
 
-int koeva_cv_cameraInit()
-{
-        int ki = 0;
-
-        kcamera0 = cvCaptureFromCAM(1);
-        cvSetCaptureProperty(kcamera0,
-                                CV_CAP_PROP_FRAME_WIDTH, 1024);
-        cvSetCaptureProperty(kcamera0,
-                                CV_CAP_PROP_FRAME_HEIGHT, 768);
-
-        if (!kcamera0) {
-                fprintf(stderr, "Could not open the camera0!\n");
-        }
-
-        //Skip 6 frame for stable image acquisition
-        for (ki = 0; ki < 6; ki++) {
-                cvQueryFrame(kcamera0);
-                sleep(1);
-        }
-
-        return 0;
-}
-
 int koeva_cv_dirShutdown()
 {
         int rc;
@@ -73,28 +35,54 @@ int koeva_cv_dirShutdown()
         return 0;
 }
 
-int koeva_cv_cameraShutdown()
-{
-        cvReleaseCapture(&kcamera0);
-        return 0;
-}
-
-int koeva_cv_captureImage(char* _filename)
+int koeva_cv_captureImage(char* _filename, kcamera_t _which)
 {
         char kpath_to_image[255] = "";
+        IplImage* kframe = 0;
+        CvCapture* kcamera = 0;
+
+        char ktemp_int[10] = "";
+
+        int kindexC;
+        int ki;
+
+        koeva_udev_init();
+
+        switch(_which){
+        case 0:
+                kindexC = koeva_udev_indexOfTopCamera_V4L2();
+                break;
+        case 1:
+                kindexC = koeva_udev_indexOfBottomCamera_V4L2();
+                break;
+        }
+
+        kcamera = cvCaptureFromCAM(kindexC);
+
+        for (ki = 0; ki < 10; ki++) {
+                cvQueryFrame(kcamera);
+                usleep(100 * 1);
+        }
+
+        sprintf(ktemp_int, "%d", _which);
 
         strcat(kpath_to_image, IMAGE_DIR);
         strcat(kpath_to_image, "/");
         strcat(kpath_to_image, _filename);
+        strcat(kpath_to_image, "-");
+        strcat(kpath_to_image, ktemp_int);
         strcat(kpath_to_image, ".jpg");
 
-        kframe0 = cvQueryFrame(kcamera0);
+        kframe = cvQueryFrame(kcamera);
         
-        if (kframe0) {
-                cvSaveImage(kpath_to_image, kframe0, 0);
+        if (kframe) {
+                cvSaveImage(kpath_to_image, kframe, 0);
         } else {
                 fprintf(stderr, "ERROR: Frame is not acquired!\n");
         }
 
+        cvReleaseCapture(&kcamera);
+
         return 0;
 }
+

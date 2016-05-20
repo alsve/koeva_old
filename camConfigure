@@ -1,0 +1,73 @@
+#!/bin/bash
+
+########################################################################
+#                            camConfigure                              #
+# Author: Alrayan                                                      #
+# Created on: 20 May 2016                                              #
+# Description of the script:                                           #
+# The script will write output configuration file                      #
+# File name: camIndex.conf contain information                         #
+# Two numbers separated by new line character                          #
+# The first line first number is a number of top camera index          #
+# And the second line first number is a number of bottom camera index  #
+########################################################################
+
+
+#Checking if udev whether is installed or not
+if [ ! -x "/bin/udevadm" ]; then
+        printf "ERROR: udevadm can not be executed!\n";
+        printf "ERROR: missing?\n"
+        exit -1
+fi
+
+# Checking if device file of video1 and video2 exist
+# You could change /dev/videoX when the two cameras supposed to be exist
+# linked to them
+if [ ! -e "/dev/video1" -o ! -e "/dev/video2" ]; then
+        printf "ERROR: are the device connected with two cameras?\n"
+        exit -2
+fi
+
+# Checking if camIndex configuration file exist
+# The file will be removed, if it exists.
+if [ -f "./camIndex.conf" ]; then
+        echo "WARNING: Removing existing camIndex.conf"
+        rm -f "./camIndex.conf"
+fi
+
+#Top camera is supossed to be connected through USB2-1
+#Number port can be changed according to your need
+TOP_CAMERA_PORT=1
+BOTTOM_CAMERA_PORT=2
+
+#Detects which port /dev/video1 linked to
+koeva_dev_video1=$(udevadm info --attribute-walk -p $(udevadm info -q path -n /dev/video1) | grep "KERNELS" | sed '2q;d')
+
+koeva_video1_which_port_usb_2=${koeva_dev_video1:18:1}
+
+#Detects which port /dev/video2 linked to
+koeva_dev_video2=$(udevadm info --attribute-walk -p $(udevadm info -q path -n /dev/video2) | grep "KERNELS" | sed '2q;d')
+
+koeva_video2_which_port_usb_2=${koeva_dev_video2:18:1}
+
+# Test case of /dev/videoX's are either top or bottom camera
+if [ $koeva_video1_which_port_usb_2 -eq $TOP_CAMERA_PORT ] && [ $koeva_video2_which_port_usb_2 -eq $BOTTOM_CAMERA_PORT ]; then
+        printf "WARNING: Top camera is on index: 1\n"
+        printf "WARNING: Bottom camera is on index: 2\n"
+        echo "EXEC: echo -n \"1\\n2\" >> camIndex.conf"
+        echo '1' >> camIndex.conf
+        echo '2' >> camIndex.conf
+else 
+        if [ $koeva_video1_which_port_usb_2 -eq $BOTTOM_CAMERA_PORT ] && [ $koeva_video2_which_port_usb_2 -eq $TOP_CAMERA_PORT ]; then
+                printf "Top camera is on index: 2\n"
+                printf "Bottom camera is on index: 1\n"
+                echo "EXEC: echo -n \"2\\n1\" >> camIndex.conf"
+                echo '2' >> camIndex.conf
+                echo '1' >> camIndex.conf
+        else
+                printf "Are you sure, you already insert into the right port?\n"
+                printf "ERROR: please check where the camera usb inserted\n"
+        fi
+fi
+
+#--End of File--
