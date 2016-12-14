@@ -112,6 +112,8 @@ int koeva_isLcdReady()
         koeva_serialport_read_until(klcd_state, temp, 'R', 1, timeout);
         printf("WARNING: LCD and keypad ready!\n");
 
+        usleep(1000000 * 4);
+
         return 0;
 }
 
