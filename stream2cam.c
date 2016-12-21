@@ -6,7 +6,7 @@
  * Note : Linux is using FFMPEG to acquire images from USB web camera.
  *        So plugging two cameras at the same USB 2 controller will
  *        make USB Controller bottlenecked and resulting an error.
- *        To prevent this error, you need to plug the USB web camera to
+ *        To prevent this error, you need to plug each of USB web camera to
  *        different USB controller.
  *
  *        1. Check /dev/videoX if it is there or not.
