@@ -7,6 +7,7 @@
 */
 
 #include "libkudev.h"
+#include "libkoeva.h"
 
 int kindexBC;
 int kindexTC;
@@ -23,12 +24,24 @@ int koeva_udev_init()
 
         if (krc == 127) {
                 fprintf(stderr, "FATAL ERROR: camConfigure script not found!");
+                koeva_lcd_write(0, 0, "--------ERROR-------");
+                koeva_lcd_write(0, 1, "camConfigure script ");
+                koeva_lcd_write(0, 2, "is not found. Where?");
+                koeva_lcd_write(0, 3, "                    ");
                 for(;;); // Looping program forever
         } else if (krc == -1) {
                 fprintf(stderr, "FATAL ERROR: udevadm is not installed!");
+                koeva_lcd_write(0, 0, "--------ERROR-------");
+                koeva_lcd_write(0, 1, "   udevadm is not   ");
+                koeva_lcd_write(0, 2, "     installed.     ");
+                koeva_lcd_write(0, 3, " Please install it. ");
                 for(;;);
         } else if (krc == -2) {
                 fprintf(stderr, "FATAL ERROR: Are cameras already connected?");
+                koeva_lcd_write(0, 0, "--------ERROR-------");
+                koeva_lcd_write(0, 1, "Please check camera.");
+                koeva_lcd_write(0, 2, "Koeva did not detect");
+                koeva_lcd_write(0, 3, "the camera. Where?  ");
         }
 
         do{
