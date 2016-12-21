@@ -1,11 +1,11 @@
 /* stream2cam
- * Enable to stream 2 camera at the same time
- * Stream will be directed to gui using cvWindow
+ * Enabling streaming 2 cameras concurrently
+ * Stream will be redirected to gui using cvWindow
  * Author : Alrayan
  * Date : December 21 2016
- * Note : Linux is using FFMPEG to acquire image from the USB wecamera.
- *        So plugging to camera at the same USB controller will
- *        make USB don't hold enough bandwith and resulting error.
+ * Note : Linux is using FFMPEG to acquire images from USB web camera.
+ *        So plugging two cameras at the same USB 2 controller will
+ *        make USB Controller bottlenecked and resulting an error.
  *        To prevent this error, you need to plug the USB web camera to
  *        different USB controller.
  *
